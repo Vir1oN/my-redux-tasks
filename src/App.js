@@ -1,50 +1,22 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {addInput, removeInput} from "./redux/action-creators";
+import {fetchUsers} from "./redux/action-creators";
+import User from "./components/user";
 
 
 export default function App() {
-    const userOptions = useSelector((state) => state.userInput);
+    const usersArray = useSelector((state) => state.usersArray);
     const dispatch = useDispatch();
 
-    let myForm = useRef();
-    let mySelect = useRef();
+    useEffect(() => {
+        dispatch(fetchUsers());
+    }, [dispatch]);
 
-    console.log(userOptions);
-
-    // const refreshSelect = () => {
-    //     for (const string of userOptions) {
-    //         console.log(document.querySelector('mySelect'));
-    //     }
-    // }
-
-    const submitHandler = (e) => {
-        e.preventDefault();
-        const currentInput = myForm.current.userText.value;
-        console.log(currentInput);
-        dispatch(addInput(currentInput));
-    }
-
-    const deleteBtnHandler = (e) => {
-        e.preventDefault();
-        const currentOptionIndex = mySelect.current.options.selectedIndex;
-        const stringToDelete = mySelect.current.options[currentOptionIndex].value;
-        dispatch(removeInput(stringToDelete));
-    }
+    console.log(usersArray);
 
     return (
         <div className="App">
-            <form name={'myForm'} ref={myForm} onSubmit={submitHandler}>
-                <input type="text" name={'userText'}/>
-                <input type={'submit'}/>
-            </form>
-
-            <form name={'userInputsForm'}>
-                <select name="strings" ref={mySelect}>
-                    {userOptions.map(input => (<option value={input} key={input}>{input}</option>))}
-                </select>
-                <button onClick={deleteBtnHandler}>Delete</button>
-            </form>
+            {usersArray.map((value) => <User item={value} key = {value.id}/>)}
         </div>
     );
 }
